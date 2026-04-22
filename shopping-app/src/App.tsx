@@ -1,27 +1,12 @@
-import { BrandStrip } from './components/landing/BrandStrip'
-import { DownloadAppSection } from './components/landing/DownloadAppSection'
-import { Header } from './components/landing/Header'
-import { NewArrivalsSection } from './components/landing/NewArrivalsSection'
-import { NewsletterSection } from './components/landing/NewsletterSection'
-import { PaydaySection } from './components/landing/PaydaySection'
-import { SiteFooter } from './components/landing/SiteFooter'
-import { YoungFavouritesSection } from './components/landing/YoungFavouritesSection'
+import { Route, Routes } from 'react-router-dom'
+import { AdminPage } from './pages/AdminPage'
+import { HomePage } from './pages/HomePage'
 
-function App() {
+export default function App() {
   return (
-    <div className="relative overflow-hidden bg-brand/25">
-      <Header />
-      <main className="mx-auto w-full max-w-6xl px-2 md:px-8">
-        <BrandStrip />
-        <NewArrivalsSection />
-        <PaydaySection />
-        <YoungFavouritesSection />
-        <DownloadAppSection />
-      </main>
-      <NewsletterSection />
-      <SiteFooter />
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/admin" element={<AdminPage />} />
+    </Routes>
   )
 }
-
-export default App

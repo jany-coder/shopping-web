@@ -1,0 +1,26 @@
+[
+  {
+    "id": "arrival-1",
+    "title": "Hoodies & Sweatshirt",
+    "category": "Outerwear",
+    "price": 49.99,
+    "imageKey": "new-arrival-01",
+    "cta": "Explore Now"
+  },
+  {
+    "id": "arrival-2",
+    "title": "Coats & Parkas",
+    "category": "Outerwear",
+    "price": 89.99,
+    "imageKey": "new-arrival-2",
+    "cta": "Explore Now"
+  },
+  {
+    "id": "arrival-3",
+    "title": "Tees & T-Shirt",
+    "category": "Basics",
+    "price": 24.99,
+    "imageKey": "new-arrival-3",
+    "cta": "Explore Now"
+  }
+]

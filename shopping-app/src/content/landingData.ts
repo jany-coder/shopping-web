@@ -6,10 +6,6 @@ import obeyLogo from '../assets/obey.png'
 import shopifyLogo from '../assets/shopify.png'
 import favouriteImg from '../assets/favourite.png'
 import favourite02Img from '../assets/favourite-02.png'
-import newArrival01Img from '../assets/new-arrival-01.png'
-import newArrival02Img from '../assets/new-arrival-2.png'
-import newArrival03Img from '../assets/new-arrival-3.png'
-
 export type ShowcaseItem = {
   title: string
   cta: string
@@ -31,12 +27,6 @@ export const brandLogos: BrandLogo[] = [
   { id: 'lacoste', src: lacosteLogo, alt: 'Lacoste' },
   { id: 'levis', src: levisLogo, alt: "Levi's" },
   { id: 'amazon', src: amazonLogo, alt: 'Amazon' },
-]
-
-export const newArrivals: ShowcaseItem[] = [
-  { title: 'Hoodies & Sweatshirt', cta: 'Explore Now', image: newArrival01Img },
-  { title: 'Coats & Parkas', cta: 'Explore Now', image: newArrival02Img },
-  { title: 'Tees & T-Shirt', cta: 'Explore Now', image: newArrival03Img },
 ]
 
 export const youngFavourites: ShowcaseItem[] = [
