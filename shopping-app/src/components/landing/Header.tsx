@@ -1,4 +1,5 @@
 import heroImg from '../../assets/hero.png'
+import logoImg from '../../assets/logo.png'
 import { navItems } from '../../content/landingData'
 
 export function Header() {
@@ -7,7 +8,16 @@ export function Header() {
       <div className="rounded-t-[14px] bg-surface px-2 py-2 md:rounded-t-[24px] md:px-10 md:py-4">
         <nav className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-6">
           <div className="flex items-center justify-between gap-3">
-            <a className="text-xs font-black tracking-wide md:text-xl" href="#">
+            <a
+              className="flex items-center gap-2 text-xs font-black tracking-wide md:gap-2.5 md:text-xl"
+              href="#"
+            >
+              <img
+                src={logoImg}
+                alt=""
+                className="h-5 w-auto max-h-7 max-w-[112px] object-contain object-left md:h-7 md:max-h-8 md:max-w-[148px]"
+                decoding="async"
+              />
               FASHION
             </a>
             <button
