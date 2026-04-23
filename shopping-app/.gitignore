@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Captured newsletter emails (optional: remove this line to commit a demo list)
-server/data/subscribers.json
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -2,7 +2,7 @@ import { ApiError } from './client'
 
 /** Shown when `fetch` fails before an HTTP response (offline, wrong port, etc.). */
 export const API_NETWORK_ERROR_MESSAGE =
-  'Cannot reach the API. Run npm run dev:full from shopping-app (or server:dev + dev).'
+  'Cannot reach the API. Start the backend server and verify VITE_API_URL points to it.'
 
 export async function readResponseJson(res: Response): Promise<unknown> {
   try {

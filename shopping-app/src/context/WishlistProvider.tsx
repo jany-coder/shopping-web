@@ -9,8 +9,13 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     const onStorage = (e: StorageEvent) => {
       if (e.key === WISHLIST_STORAGE_KEY) setIds(readWishlistIds())
     }
+    const onAuthChanged = () => setIds(readWishlistIds())
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    window.addEventListener('fcs-auth-changed', onAuthChanged)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('fcs-auth-changed', onAuthChanged)
+    }
   }, [])
 
   const has = useCallback((id: string) => ids.includes(id), [ids])
@@ -23,7 +28,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const value = useMemo(() => ({ has, toggle }), [has, toggle])
+  const value = useMemo(() => ({ ids, has, toggle }), [ids, has, toggle])
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>
 }

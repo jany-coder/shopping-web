@@ -1,6 +1,5 @@
 import type { ShowcaseItem } from '../../content/landingData'
 import { useProducts } from '../../hooks/useProducts'
-import { resolveProductImage } from '../../lib/productImageMap'
 import type { ProductDto } from '../../types/product'
 import { ShowcaseCard } from './ShowcaseCard'
 
@@ -46,7 +45,7 @@ export function NewArrivalsSection() {
       {state.status === 'ok' ? (
         <div className="mt-3 grid grid-cols-3 gap-2 md:mt-8 md:gap-6">
           {state.data.map((p) => {
-            const image = resolveProductImage(p.imageKey)
+            const image = p.imageUrl
             if (!image) return null
             const item = toShowcaseItem(p, image)
             return (

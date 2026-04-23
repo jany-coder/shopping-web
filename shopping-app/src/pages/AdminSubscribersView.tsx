@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { FaArrowLeft, FaExclamationCircle, FaSyncAlt } from 'react-icons/fa'
+import { ProductManager } from '../components/admin/ProductManager'
 import { SubscriberTable } from '../components/admin/SubscriberTable'
+import { useAdminProducts } from '../hooks/useAdminProducts'
 import { useAdminSubscribers } from '../hooks/useAdminSubscribers'
 import { clearAdminDemoSession } from '../lib/adminDemoAuth'
 
@@ -10,6 +12,7 @@ type AdminSubscribersViewProps = {
 
 export function AdminSubscribersView({ onLogout }: AdminSubscribersViewProps) {
   const { listState, reload, removeSubscriber, deleteError, deletingEmail } = useAdminSubscribers()
+  const { state: productsState } = useAdminProducts()
 
   async function handleDelete(email: string) {
     if (!window.confirm(`Remove ${email} from the newsletter list?`)) return
@@ -19,29 +22,30 @@ export function AdminSubscribersView({ onLogout }: AdminSubscribersViewProps) {
   const loading = listState.status === 'loading'
   const listError = listState.status === 'error' ? listState.message : ''
   const subscribers = listState.status === 'ready' ? listState.subscribers : []
-  const count = listState.status === 'ready' ? listState.subscribers.length : null
+  const subscriberCount = listState.status === 'ready' ? listState.subscribers.length : 0
+  const productCount = productsState.status === 'ready' ? productsState.products.length : 0
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-zinc-100 via-white to-brand/7 text-ink">
-      <header className="sticky top-0 z-20 border-b border-zinc-200/70 bg-white/85 px-4 py-5 shadow-sm backdrop-blur-md md:px-8">
-        <div className="mx-auto flex max-w-4xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-h-screen bg-zinc-100 text-ink">
+      <header className="border-b border-zinc-200 bg-white px-4 py-4 md:px-8">
+        <div className="mx-auto flex max-w-5xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">Newsletter</p>
-            <h1 className="mt-1.5 text-2xl font-black tracking-tight text-zinc-900 md:text-3xl">Subscribers</h1>
+            <p className="text-xs font-medium tracking-wide text-zinc-500">Admin</p>
+            <h1 className="mt-1 text-2xl font-semibold text-zinc-900">Dashboard</h1>
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-zinc-900/15 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-60"
               onClick={reload}
               disabled={loading}
             >
-              <FaSyncAlt className={`size-3.5 ${loading ? 'animate-spin' : ''}`} aria-hidden />
+              <FaSyncAlt className={`size-3 ${loading ? 'animate-spin' : ''}`} aria-hidden />
               {loading ? 'Refreshing…' : 'Refresh'}
             </button>
             <button
               type="button"
-              className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
+              className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
               onClick={() => {
                 clearAdminDemoSession()
                 onLogout()
@@ -50,40 +54,40 @@ export function AdminSubscribersView({ onLogout }: AdminSubscribersViewProps) {
               Log out
             </button>
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
+              className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
               to="/"
             >
-              <FaArrowLeft className="size-3 opacity-70" aria-hidden />
-              Back to site
+              <FaArrowLeft className="size-3" aria-hidden />
+              Back
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-12">
-        {count !== null ? (
-          <div className="mb-6 flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-baseline gap-1.5 rounded-2xl bg-white px-4 py-2 text-sm shadow-md shadow-zinc-900/4 ring-1 ring-zinc-200/80">
-              <span className="text-2xl font-black tabular-nums tracking-tight text-zinc-900">{count}</span>
-              <span className="font-medium text-zinc-500">
-                subscriber{count === 1 ? '' : 's'}
-              </span>
-            </span>
+      <main className="mx-auto max-w-5xl px-4 py-6 md:px-8 md:py-8">
+        <section className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-sm text-zinc-500">Products</p>
+            <p className="mt-1 text-2xl font-semibold text-zinc-900">{productCount}</p>
           </div>
-        ) : null}
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="text-sm text-zinc-500">Subscribers</p>
+            <p className="mt-1 text-2xl font-semibold text-zinc-900">{subscriberCount}</p>
+          </div>
+        </section>
 
         {listError ? (
           <div
-            className="mb-6 flex flex-col gap-4 rounded-2xl border border-red-100 bg-red-50/90 px-4 py-4 text-sm text-red-900 shadow-sm sm:flex-row sm:items-center sm:justify-between md:px-8"
+            className="mt-4 flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 sm:flex-row sm:items-center sm:justify-between"
             role="alert"
           >
-            <span className="flex gap-3">
-              <FaExclamationCircle className="mt-0.5 size-5 shrink-0 text-red-600" aria-hidden />
-              <span className="leading-snug">{listError}</span>
+            <span className="flex gap-2">
+              <FaExclamationCircle className="mt-0.5 size-4 shrink-0 text-red-600" aria-hidden />
+              <span>{listError}</span>
             </span>
             <button
               type="button"
-              className="shrink-0 self-start rounded-xl bg-white px-4 py-2 text-sm font-semibold text-red-800 shadow-sm ring-1 ring-red-200/80 transition hover:bg-red-50 sm:self-center"
+              className="self-start rounded border border-red-300 bg-white px-3 py-1.5 text-sm text-red-800 hover:bg-red-100 sm:self-center"
               onClick={reload}
             >
               Try again
@@ -92,22 +96,33 @@ export function AdminSubscribersView({ onLogout }: AdminSubscribersViewProps) {
         ) : null}
 
         {deleteError ? (
-          <div
-            className="mb-6 flex gap-3 rounded-2xl border border-red-100 bg-red-50/90 px-4 py-4 text-sm text-red-900 shadow-sm md:px-8"
-            role="alert"
-          >
-            <FaExclamationCircle className="mt-0.5 size-5 shrink-0 text-red-600" aria-hidden />
-            <span className="leading-snug">{deleteError}</span>
+          <div className="mt-3 flex gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+            <FaExclamationCircle className="mt-0.5 size-4 shrink-0 text-red-600" aria-hidden />
+            <span>{deleteError}</span>
           </div>
         ) : null}
 
-        <SubscriberTable
-          loading={loading}
-          listError={listError}
-          subscribers={subscribers}
-          deletingEmail={deletingEmail}
-          onDelete={handleDelete}
-        />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+          <section className="rounded-xl border border-zinc-200 bg-white p-4 md:p-5">
+            <h2 className="m-0 text-lg font-semibold text-zinc-900">Manage products</h2>
+            <p className="mt-1 text-sm text-zinc-500">Add new items and remove outdated products.</p>
+            <ProductManager embedded />
+          </section>
+
+          <section className="rounded-xl border border-zinc-200 bg-white p-4 md:p-5">
+            <h2 className="m-0 text-lg font-semibold text-zinc-900">Manage subscribers</h2>
+            <p className="mt-1 text-sm text-zinc-500">View newsletter signups and remove addresses.</p>
+            <div className="mt-4">
+              <SubscriberTable
+                loading={loading}
+                listError={listError}
+                subscribers={subscribers}
+                deletingEmail={deletingEmail}
+                onDelete={handleDelete}
+              />
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   )

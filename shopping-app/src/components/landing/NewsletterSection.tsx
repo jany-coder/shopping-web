@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
 import { FaCheckCircle } from 'react-icons/fa'
 import { subscribeNewsletter } from '../../api/client'
 import { getErrorMessage } from '../../lib/getErrorMessage'
@@ -81,14 +80,6 @@ export function NewsletterSection() {
             {status === 'loading' ? '…' : 'SEND'}
           </button>
         </div>
-        <p className="mt-3 text-center text-xs text-ink md:text-sm">
-          <Link
-            to="/admin"
-            className="font-medium text-ink underline decoration-ink/40 underline-offset-2 transition-colors hover:text-black hover:decoration-black"
-          >
-            Admin — newsletter subscribers
-          </Link>
-        </p>
       </form>
 
       <div

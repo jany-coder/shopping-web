@@ -1,31 +1,34 @@
 # FCS Mart — Shopping landing (React + Vite)
 
-Fashion landing page with a small **Express mock API** in the same repo: product catalog, newsletter signup, and client-side wishlist (localStorage).
+Fashion landing page frontend (React + Vite). Backend now lives in a separate sibling project: **`../shopping-backend`**.
 
 ## Run the app (frontend + API)
 
-From **`shopping-app/`** (or from the repo root **`FCS MART BD/`** if you use the root `package.json`):
+From **`shopping-app/`**:
 
 ```bash
-cd shopping-app   # skip if you are already here
 npm install
-npm run dev:full
+npm run dev
 ```
 
-From repo root only: `npm install` must be run once inside `shopping-app` (dependencies live there). Root scripts use `npm run … --prefix shopping-app`.
+In another terminal, run the backend from `shopping-backend/`:
+
+```bash
+cd ../shopping-backend
+npm install
+MONGODB_URI=mongodb://127.0.0.1:27017 MONGODB_DB=fcs_mart npm run dev
+```
 
 This starts:
 
 - **Vite** (default `http://localhost:5173`) — UI
-- **Mock API** on **port 3001** — `GET /api/products`, `POST /api/newsletter`, admin routes under `/api/admin/*`
+- **Backend API** on **port 3001** from `shopping-backend`
 
 The Vite dev server **proxies** `/api` to the API, so the browser calls `/api/...` with no CORS setup in development.
 
-**Troubleshooting `dev:full`:** On macOS, running Vite and `node --watch` together can hit **“EMFILE: too many open files”**. This project uses plain `node server/index.mjs` for the API (no watch) so both can run. After changing `api/app.mjs` or `server/index.mjs`, restart `npm run server:dev` or `dev:full`. Use `npm run server:dev:watch` only when the API runs **alone** (no Vite).
+**HTTP 404 on `/api/*`:** Usually backend is not running or `VITE_API_URL` points to a wrong host/port. Start `shopping-backend` and verify API URL.
 
-**HTTP 404 on `/api/*`:** Often **port 3001 is already used by another program** (Cursor, Docker, another API). Vite then proxies `/api` to the wrong process → **404**. Fix: run `lsof -i :3001` (Mac) or Task Manager, stop the other app, restart `npm run dev:full`. Or run this API on another port: `PORT=3002 npm run server:dev` and add **`VITE_API_PROXY_PORT=3002`** to `.env.local` in `shopping-app` so Vite’s proxy matches (same value as `PORT`).
-
-**Other 404 causes:** Wrong URL / `file://` / preview without API. Use **`npm run dev`** or **`npm run dev:full`** from `shopping-app` and open **`http://localhost:5173/admin`**. For **`npm run preview`**, start the API first; preview also proxies `/api`.
+**Other 404 causes:** Wrong URL / `file://` / preview without API. Use **`npm run dev`** from `shopping-app` and open **`http://localhost:5173/admin`**.
 
 ### Frontend only
 
@@ -33,53 +36,39 @@ The Vite dev server **proxies** `/api` to the API, so the browser calls `/api/..
 npm run dev
 ```
 
-Product and newsletter requests will fail unless the API is running separately:
-
-```bash
-npm run server:dev
-```
+Product and newsletter requests will fail unless the backend (`shopping-backend`) is running.
 
 ## Environment
 
 | Variable         | Purpose |
 |----------------|---------|
-| `VITE_API_URL`   | Used in **production** builds only. In `npm run dev`, the app always calls same-origin `/api` (Vite proxy) so a bad `VITE_API_URL` in `.env` cannot break local API calls. Example prod value: `https://your-api.onrender.com` (no trailing slash). |
+| `VITE_API_URL`   | Frontend API base URL. Example: `http://127.0.0.1:3001` (local) or `https://your-api.onrender.com` (production). |
 | `VITE_API_PROXY_PORT` | **Dev / preview only.** Port Vite proxies `/api` to (default `3001`). Must match the API process `PORT`. Use when 3001 is busy, e.g. `PORT=3002` for the server and `VITE_API_PROXY_PORT=3002` in `.env.local`. |
 
 ## Admin panel (demo)
 
 - Open **`/admin`** directly, or use the **“Admin — newsletter subscribers”** link under the newsletter email field on the home page.
-- **No login** — the page shows subscriber **emails** only when the API is running (local demo).
+- Demo login uses client-side-only credentials (`admin` / `admin`) and is **not secure**.
 - **Not secure for production** — the API can still expose subscriber data; add auth before any public deploy.
 
 ## Data & persistence
 
-- **Products:** [`server/data/products.json`](server/data/products.json) — edit this file to change catalog fields (`id`, `title`, `category`, `price`, `imageKey`, `cta`). Image keys are resolved in the app via [`src/lib/productImageMap.ts`](src/lib/productImageMap.ts).
-- **Newsletter:** Subscribers are appended to `server/data/subscribers.json` (created on first successful signup; ignored by git). Copy [`server/data/subscribers.example.json`](server/data/subscribers.example.json) if you want a starter file locally. Duplicate emails (case-insensitive) return **409** with an error message.
+- **Products / Newsletter:** served by `shopping-backend` (MongoDB).
 - **Wishlist:** Stored in the browser under the key `fcs-wishlist` (localStorage).
 
 ## Production / hosting
 
-### Vercel (single project: UI + mock API)
+### Deploying with separate backend
 
-- Set the Vercel project **Root Directory** to **`shopping-app`** when the repo root is the parent folder.
-- Production builds call **same-origin** `/api/...` when **`VITE_API_URL` is unset** (recommended for the default `*.vercel.app` deployment).
-- API: [`api/index.mjs`](api/index.mjs) runs the Express app defined in [`api/app.mjs`](api/app.mjs) (same routes as local `node server/index.mjs`). [`vercel.json`](vercel.json) bundles [`server/data/products.json`](server/data/products.json) via `includeFiles`.
-- **Subscribers on Vercel** are written to **`/tmp`** (serverless has no durable repo disk). List can reset on cold starts or when another region/instance handles the request — OK for demos; use a real database for production.
-
-### Other static hosts (GitHub Pages, etc.)
-
-- Deploying **only** the static Vite build **without** a reachable API means product fetch and newsletter submit will not work until you host the Express server (or another backend) and set `VITE_API_URL` to that origin.
-- The Express app sets permissive CORS headers so a static site on another domain can call the API when using `VITE_API_URL`.
+- Deploy frontend (`shopping-app`) and backend (`shopping-backend`) as separate services.
+- Set `VITE_API_URL` in frontend deployment to the backend origin.
+- Set `MONGODB_URI` (and optional `MONGODB_DB`) in backend deployment.
 
 ## Scripts
 
 | Script        | Description |
 |---------------|-------------|
 | `npm run dev` | Vite only |
-| `npm run server:dev` | API only (`node server/index.mjs`) |
-| `npm run server:dev:watch` | API with `--watch` (use without Vite if you hit file watcher limits) |
-| `npm run dev:full` | Vite + API together |
 | `npm run build` | Typecheck + production client build |
 | `npm run preview` | Preview production build locally |
 

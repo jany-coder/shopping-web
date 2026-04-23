@@ -1,8 +1,33 @@
 import heroImg from '../../assets/hero.png'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import logoImg from '../../assets/logo.png'
 import { navItems } from '../../content/landingData'
+import { clearAuthSession, isAuthed } from '../../lib/authSession'
+import { useWishlist } from '../../hooks/useWishlist'
 
 export function Header() {
+  const nav = useNavigate()
+  const wishlist = useWishlist()
+  const [authed, setAuthed] = useState(() => isAuthed())
+
+  useEffect(() => {
+    const onStorage = () => setAuthed(isAuthed())
+    const onAuthChanged = () => setAuthed(isAuthed())
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('fcs-auth-changed', onAuthChanged)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('fcs-auth-changed', onAuthChanged)
+    }
+  }, [])
+
+  const onSignOut = () => {
+    clearAuthSession()
+    setAuthed(false)
+    nav('/auth?mode=login')
+  }
+
   return (
     <header className="mx-auto w-full max-w-6xl px-2 pt-2 md:px-8 md:pt-8">
       <div className="rounded-t-[14px] bg-surface px-2 py-2 md:rounded-t-[24px] md:px-10 md:py-4">
@@ -20,12 +45,30 @@ export function Header() {
               />
               FASHION
             </a>
-            <button
-              type="button"
-              className="shrink-0 rounded-[4px] bg-ink px-3 py-1 text-xs text-surface md:hidden"
-            >
-              SIGN UP
-            </button>
+            <div className="flex items-center gap-2 md:hidden">
+              <Link className="shrink-0 rounded-[4px] border border-ink px-3 py-1 text-xs text-ink" to="/admin">
+                Admin
+              </Link>
+              <Link
+                className="shrink-0 rounded-[4px] border border-ink px-3 py-1 text-xs text-ink"
+                to="/wishlist"
+              >
+                Wishlist ({wishlist.ids.length})
+              </Link>
+              {authed ? (
+                <button
+                  type="button"
+                  className="shrink-0 rounded-[4px] bg-ink px-3 py-1 text-xs text-surface"
+                  onClick={onSignOut}
+                >
+                  SIGN OUT
+                </button>
+              ) : (
+                <Link className="shrink-0 rounded-[4px] bg-ink px-3 py-1 text-xs text-surface" to="/auth?mode=login">
+                  SIGN IN
+                </Link>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center justify-between gap-3 md:contents">
@@ -36,12 +79,27 @@ export function Header() {
                 </li>
               ))}
             </ul>
-            <button
-              type="button"
-              className="hidden shrink-0 rounded-md bg-ink px-4 py-2 text-sm text-surface md:inline-flex"
-            >
-              SIGN UP
-            </button>
+            <div className="hidden items-center gap-2 md:flex">
+              <Link className="shrink-0 rounded-md border border-ink px-4 py-2 text-sm text-ink" to="/admin">
+                Admin
+              </Link>
+              <Link className="shrink-0 rounded-md border border-ink px-4 py-2 text-sm text-ink" to="/wishlist">
+                Wishlist ({wishlist.ids.length})
+              </Link>
+              {authed ? (
+                <button
+                  type="button"
+                  className="shrink-0 rounded-md bg-ink px-4 py-2 text-sm text-surface"
+                  onClick={onSignOut}
+                >
+                  SIGN OUT
+                </button>
+              ) : (
+                <Link className="shrink-0 rounded-md bg-ink px-4 py-2 text-sm text-surface" to="/auth?mode=login">
+                  SIGN IN
+                </Link>
+              )}
+            </div>
           </div>
         </nav>
         <section className="mt-2 grid grid-cols-[1.05fr_1fr] gap-2 rounded-[12px] bg-[#f4f6f5] p-2 md:mt-5 md:gap-8 md:rounded-[26px] md:p-6 md:px-10 md:py-8">

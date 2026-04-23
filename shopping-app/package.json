@@ -5,16 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server:dev": "node server/index.mjs",
-    "server:dev:watch": "node --watch server/index.mjs",
-    "dev:full": "concurrently -n client,api -c blue,green \"npm run dev\" \"npm run server:dev\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "concurrently": "^9.2.1",
-    "express": "^5.2.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-icons": "^5.6.0",

@@ -4,6 +4,6 @@ export type ProductDto = {
   title: string
   category: string
   price?: number
-  imageKey: string
+  imageUrl?: string
   cta?: string
 }

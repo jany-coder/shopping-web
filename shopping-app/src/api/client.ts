@@ -1,15 +1,9 @@
 import type { ProductDto } from '../types/product'
 
-/**
- * In dev, always use same-origin URLs so Vite's `/api` proxy is used.
- * A mis-set `VITE_API_URL` (e.g. wrong host) otherwise breaks API calls with 404.
- * In production builds, `VITE_API_URL` sets the real API origin.
- */
 function apiBase(): string {
-  if (import.meta.env.DEV) {
-    return ''
-  }
-  return (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+  const explicit = (import.meta.env.VITE_API_URL ?? '').trim()
+  if (explicit) return explicit.replace(/\/$/, '')
+  return ''
 }
 
 export function apiUrl(path: string): string {
