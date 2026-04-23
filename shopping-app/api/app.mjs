@@ -4,7 +4,8 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const DATA_DIR = join(__dirname, 'data')
+/** Repo JSON lives under `server/data` (sibling of `api/`). */
+const DATA_DIR = join(__dirname, '..', 'server', 'data')
 const PRODUCTS_FILE = join(DATA_DIR, 'products.json')
 
 /** Writable on Vercel serverless; local uses repo JSON (gitignored). */

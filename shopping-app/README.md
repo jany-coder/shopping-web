@@ -21,7 +21,7 @@ This starts:
 
 The Vite dev server **proxies** `/api` to the API, so the browser calls `/api/...` with no CORS setup in development.
 
-**Troubleshooting `dev:full`:** On macOS, running Vite and `node --watch` together can hit **“EMFILE: too many open files”**. This project uses plain `node server/index.mjs` for the API (no watch) so both can run. After changing `server/app.mjs` or `server/index.mjs`, restart `npm run server:dev` or `dev:full`. Use `npm run server:dev:watch` only when the API runs **alone** (no Vite).
+**Troubleshooting `dev:full`:** On macOS, running Vite and `node --watch` together can hit **“EMFILE: too many open files”**. This project uses plain `node server/index.mjs` for the API (no watch) so both can run. After changing `api/app.mjs` or `server/index.mjs`, restart `npm run server:dev` or `dev:full`. Use `npm run server:dev:watch` only when the API runs **alone** (no Vite).
 
 **HTTP 404 on `/api/*`:** Often **port 3001 is already used by another program** (Cursor, Docker, another API). Vite then proxies `/api` to the wrong process → **404**. Fix: run `lsof -i :3001` (Mac) or Task Manager, stop the other app, restart `npm run dev:full`. Or run this API on another port: `PORT=3002 npm run server:dev` and add **`VITE_API_PROXY_PORT=3002`** to `.env.local` in `shopping-app` so Vite’s proxy matches (same value as `PORT`).
 
@@ -64,7 +64,7 @@ npm run server:dev
 
 - Set the Vercel project **Root Directory** to **`shopping-app`** when the repo root is the parent folder.
 - Production builds call **same-origin** `/api/...` when **`VITE_API_URL` is unset** (recommended for the default `*.vercel.app` deployment).
-- API: [`api/index.mjs`](api/index.mjs) runs the same Express app as locally ([`server/app.mjs`](server/app.mjs)). [`vercel.json`](vercel.json) bundles [`server/data/products.json`](server/data/products.json) via `includeFiles`.
+- API: [`api/index.mjs`](api/index.mjs) runs the Express app defined in [`api/app.mjs`](api/app.mjs) (same routes as local `node server/index.mjs`). [`vercel.json`](vercel.json) bundles [`server/data/products.json`](server/data/products.json) via `includeFiles`.
 - **Subscribers on Vercel** are written to **`/tmp`** (serverless has no durable repo disk). List can reset on cold starts or when another region/instance handles the request — OK for demos; use a real database for production.
 
 ### Other static hosts (GitHub Pages, etc.)

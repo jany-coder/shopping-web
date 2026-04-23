@@ -1,7 +1,6 @@
 /**
- * Vercel serverless entry: same Express app as local `server/index.mjs`.
- * Do not remove — required for single-project Vercel deploy.
+ * Vercel serverless entry — must live under `api/` so the bundle includes this tree.
  */
-import app from '../server/app.mjs'
+import app from './app.mjs'
 
 export default app

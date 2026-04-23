@@ -1,4 +1,4 @@
-import app from './app.mjs'
+import app from '../api/app.mjs'
 
 const PORT = Number(process.env.PORT) || 3001
 
