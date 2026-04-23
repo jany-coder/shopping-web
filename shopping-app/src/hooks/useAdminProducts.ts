@@ -5,6 +5,7 @@ import {
   fetchAdminProducts,
   type AdminNewProductInput,
 } from '../api/adminClient'
+import { ApiError } from '../api/client'
 import { getErrorMessage } from '../lib/getErrorMessage'
 import type { ProductDto } from '../types/product'
 
@@ -53,8 +54,15 @@ export function useAdminProducts() {
           ? { status: 'ready', products: [created, ...prev.products] }
           : { status: 'ready', products: [created] },
       )
+      return { ok: true as const, product: created }
     } catch (e: unknown) {
-      setError(getErrorMessage(e, 'Could not add product'))
+      const message = getErrorMessage(e, 'Could not add product')
+      setError(message)
+      return {
+        ok: false as const,
+        message,
+        status: e instanceof ApiError ? e.status : undefined,
+      }
     } finally {
       setBusyId(null)
     }
@@ -70,8 +78,11 @@ export function useAdminProducts() {
           ? { status: 'ready', products: prev.products.filter((p) => p.id !== id) }
           : prev,
       )
+      return { ok: true as const }
     } catch (e: unknown) {
-      setError(getErrorMessage(e, 'Could not remove product'))
+      const message = getErrorMessage(e, 'Could not remove product')
+      setError(message)
+      return { ok: false as const, message }
     } finally {
       setBusyId(null)
     }

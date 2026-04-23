@@ -6,6 +6,7 @@ import {
 } from './requestUtils'
 import type { SubscriberRecord } from '../types/subscriber'
 import type { ProductDto } from '../types/product'
+import type { AdminUserRecord } from '../types/adminUser'
 
 export async function fetchAdminSubscribers(): Promise<SubscriberRecord[]> {
   let res: Response
@@ -58,12 +59,30 @@ export async function fetchAdminProducts(): Promise<ProductDto[]> {
   return body as ProductDto[]
 }
 
+export async function fetchAdminUsers(): Promise<AdminUserRecord[]> {
+  let res: Response
+  try {
+    res = await fetch(apiUrl('/api/admin/users'))
+  } catch {
+    throw new ApiError(API_NETWORK_ERROR_MESSAGE, 0)
+  }
+  const body = await readResponseJson(res)
+  if (!res.ok) {
+    throw apiErrorFromFailedResponse(res, body, 'Failed to load users')
+  }
+  if (!Array.isArray(body)) {
+    throw new ApiError('Invalid response', 500)
+  }
+  return body as AdminUserRecord[]
+}
+
 export type AdminNewProductInput = {
-  id: string
+  sku: string
+  stock?: number
   title: string
-  category: string
+  category?: string
   price?: number
-  imageUrl: string
+  imageUrl?: string
   cta?: string
 }
 
