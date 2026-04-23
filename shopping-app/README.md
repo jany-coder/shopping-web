@@ -64,6 +64,21 @@ Product and newsletter requests will fail unless the backend (`shopping-backend`
 - Set `VITE_API_URL` in frontend deployment to the backend origin.
 - Set `MONGODB_URI` (and optional `MONGODB_DB`) in backend deployment.
 
+### Deploy `shopping-app` on Vercel
+
+This repo is configured for Vercel SPA hosting via `vercel.json`.
+
+1. Import `shopping-app` as a Vercel project.
+2. Root directory should be **`shopping-app`**.
+3. In Vercel Project -> Settings -> Environment Variables, add:
+   - `VITE_API_URL=https://<your-backend-domain>`
+4. Deploy.
+
+Verify after deploy:
+
+- Frontend opens on `/` and `/admin` (SPA rewrite works)
+- Network requests go to `https://<your-backend-domain>/api/...`
+
 ## Scripts
 
 | Script        | Description |
